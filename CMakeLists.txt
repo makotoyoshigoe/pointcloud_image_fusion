@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(lidar_camera_fusion)
+project(pointcloud_image_fusion)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-O3 -Wall -Wextra -Wpedantic)
@@ -20,13 +20,15 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(image_geometry REQUIRED)
+find_package(CLI11 REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
 add_executable(lc_fusion
 	src/main.cpp
-	src/fusion_node.cpp
+	src/camera.cpp
+	src/coloring.cpp
 )
 
 ament_target_dependencies(lc_fusion
@@ -43,6 +45,7 @@ ament_target_dependencies(lc_fusion
 	tf2_geometry_msgs
 	image_transport
 	image_geometry
+	CLI11
 )
 
 target_include_directories(lc_fusion PUBLIC
@@ -53,6 +56,12 @@ target_include_directories(lc_fusion PUBLIC
 
 install(TARGETS lc_fusion
   	DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY
+   	launch
+	rviz
+	DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

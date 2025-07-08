@@ -15,17 +15,19 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
-#include <image_geometry/pinhole_camera_model.h>
-#include <opencv2/opencv.hpp>
-#include <pcl_conversions/pcl_conversions.h>
-#include <pcl_ros/transforms.hpp>
+#include <pcl/filters/voxel_grid.h>
+
+#include "pointcloud_image_fusion/coloring.hpp"
 
 namespace lc_fusion {
+template<typename T_p>
 class FusionNode : public rclcpp::Node {
 public:
     FusionNode(void);
     ~FusionNode(void);
     void init_pubsub(void);
+	void init_param(void);
+    void init_vg_filter(void);
     void fusion_cb(
         sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud_msg,
         sensor_msgs::msg::Image::ConstSharedPtr img_msg,
@@ -34,23 +36,6 @@ public:
     bool get_pose_from_lidar_to_camera(
         std::string lidar_frame_id, std::string camera_frame_id,
         tf2::Transform& tf);
-    void transform_cloud(
-        sensor_msgs::msg::PointCloud2::ConstSharedPtr& cloud_msg,
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr& trans_cloud,
-        tf2::Transform& tf);
-    bool transform_image(
-        sensor_msgs::msg::Image::ConstSharedPtr& img_msg,
-        cv::Mat& rgb_image);
-    void sensor_fusion(
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr& colored_cloud,
-        image_geometry::PinholeCameraModel& cam_model,
-        cv::Mat& rgb_image);
-    void set_cloud_color(
-        pcl::PointCloud<pcl::PointXYZRGB>::iterator& pt,
-        cv::Vec3b& cv_vec);
-    void set_cloud_color(
-        pcl::PointCloud<pcl::PointXYZRGB>::iterator& pt,
-        int c);
     void publish_color_cloud(
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr& colored_cloud,
         tf2::Transform& tf,
@@ -58,6 +43,7 @@ public:
 
 private:
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_color_pc2_;
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_depth_image_;
     message_filters::Subscriber<sensor_msgs::msg::PointCloud2> sub_point_cloud_;
     message_filters::Subscriber<sensor_msgs::msg::Image> sub_image_;
     message_filters::Subscriber<sensor_msgs::msg::CameraInfo> sub_camera_info_;
@@ -70,7 +56,15 @@ private:
     std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
+    // std::unique_ptr<Camera> camera_;
+    // std::unique_ptr<Lidar<T_p>> lidar_;
+    std::unique_ptr<Coloring> coloring_;
     bool init_tf_;
+	bool rm_outrange_, rm_outlier_;
+
+    pcl::VoxelGrid<pcl::PointXYZRGB>::Ptr voxel_grid_filter_;
 };
 
 }
+
+#include "pointcloud_image_fusion/fusion_node.ipp"
