@@ -13,7 +13,7 @@ def generate_launch_description():
     rs_pkg = get_package_share_directory('realsense2_camera')
 
     # RViz設定ファイルパス
-    rviz_config = os.path.join(fusion_pkg, 'rviz', 'rviz.rviz')
+    rviz_config = os.path.join(fusion_pkg, 'rviz', 'realsense_only.rviz')
 
     return LaunchDescription([
         # Group: RealSenseデバイス起動
