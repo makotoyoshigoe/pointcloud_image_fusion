@@ -27,7 +27,6 @@ find_package(CLI11 REQUIRED)
 
 add_executable(lc_fusion
 	src/main.cpp
-	src/camera.cpp
 	src/coloring.cpp
 )
 
