@@ -34,4 +34,4 @@ jobs:
           rosdep update
           rosdep install -i -y --from-path src
           colcon build --symlink-install
-      - shell: bash
+        shell: bash
