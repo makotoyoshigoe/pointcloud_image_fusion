@@ -29,6 +29,7 @@ jobs:
           cd ~/ && bash ros2_ws/src/pointcloud_image_fusion/test/setup.bash
       - name: Build this package
         run: |
+          source /opt/ros/humble/setup.bash
           cd ~/ros2_ws/
           rosdep update
           rosdep install -i -y --from-path src
