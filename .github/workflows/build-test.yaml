@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         rosdistro:
-          - [humble, jazzy]
+          - humble
 
     steps:
       - uses: actions/checkout@v2
