@@ -25,8 +25,9 @@ FusionNode<T_p>::FusionNode()
           sub_point_cloud_, sub_image_, sub_camera_info_)
     , init_tf_(false)
 {
-    init_vg_filter();
+    declare_param();
 	init_param();
+    init_vg_filter();
     init_pubsub();
     coloring_.reset(new Coloring(rm_outrange_));
 }
@@ -41,25 +42,30 @@ void FusionNode<T_p>::init_pubsub(void)
         "colored_cloud", rclcpp::QoS(10));
     pub_depth_image_ = create_publisher<sensor_msgs::msg::Image>(
         "depth/ref_cloud", rclcpp::QoS(10));
-    sub_point_cloud_.subscribe(this, "livox/lidar");
-    sub_image_.subscribe(this, "camera/camera/color/image_raw");
-    sub_camera_info_.subscribe(this, "camera/camera/color/camera_info");
+    sub_point_cloud_.subscribe(this, "pointcloud");
+    sub_image_.subscribe(this, "image_raw");
+    sub_camera_info_.subscribe(this, "camera_info");
     sync_.registerCallback(&FusionNode<T_p>::fusion_cb, this);
+}
+
+template<typename T_p>
+void FusionNode<T_p>::declare_param(void)
+{
+	this->declare_parameter("remove_outrange", true);
+	this->declare_parameter("remove_outlier", false);
+    this->declare_parameter("leaf_size", 0.05);
 }
 
 template<typename T_p>
 void FusionNode<T_p>::init_param(void)
 {
-	this->declare_parameter("remove_outrange", true);
 	rm_outrange_ = this->get_parameter("remove_outrange").as_bool();
-	this->declare_parameter("remove_outlier", true);
-	rm_outlier_= this->get_parameter("remove_outlier").as_bool();
+	rm_outlier_  = this->get_parameter("remove_outlier").as_bool();
 }
 
 template<typename T_p>
 void FusionNode<T_p>::init_vg_filter(void)
 {
-    this->declare_parameter("leaf_size", 0.05);
     double leaf_size = this->get_parameter("leaf_size").as_double();
     voxel_grid_filter_.reset(new pcl::VoxelGrid<pcl::PointXYZRGB>());
     voxel_grid_filter_->setLeafSize(leaf_size, leaf_size, leaf_size);

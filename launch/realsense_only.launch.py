@@ -16,7 +16,6 @@ def generate_launch_description():
     rviz_config = os.path.join(fusion_pkg, 'rviz', 'realsense_only.rviz')
 
     return LaunchDescription([
-        # Group: RealSenseデバイス起動
         GroupAction([
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
@@ -29,11 +28,7 @@ def generate_launch_description():
                     'pointcloud.enable': 'true',
                     'pointcloud.ordered_pc': 'false', 
                 }.items()
-            )
-        ]),
-
-        # Group: lc_fusionノード
-        GroupAction([
+            ), 
             Node(
                 package='pointcloud_image_fusion',
                 executable='lc_fusion',
@@ -41,7 +36,9 @@ def generate_launch_description():
                 output='screen',
                 arguments=['--pc-type', 'xyz', '--ros-args', '--log-level', 'warn'],
                 remappings=[
-                    ('/livox/lidar', '/camera/camera/depth/color/points')
+                    ('pointcloud', 'camera/camera/depth/color/points'), 
+                    ('image_raw', 'camera/camera/color/image_raw'), 
+                    ('camera_info', 'camera/camera/color/camera_info')
                 ],
                 parameters=[{
                     'remove_outrange': True, 

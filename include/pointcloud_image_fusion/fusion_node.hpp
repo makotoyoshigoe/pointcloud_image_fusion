@@ -26,6 +26,7 @@ public:
     FusionNode(void);
     ~FusionNode();
     void init_pubsub(void);
+    void declare_param(void);
 	void init_param(void);
     void init_vg_filter(void);
     void fusion_cb(

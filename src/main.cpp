@@ -9,8 +9,6 @@ std::shared_ptr<rclcpp::Node> create_node_by_name(const std::string& pc_type) {
         return std::make_shared<lc_fusion::FusionNode<pcl::PointXYZ>>();
     } else if (pc_type == "xyzi") {
         return std::make_shared<lc_fusion::FusionNode<pcl::PointXYZI>>();
-    } else if (pc_type == "xyzrgb") {
-        return std::make_shared<lc_fusion::FusionNode<pcl::PointXYZRGB>>();
     } else {
         throw std::runtime_error("Unknown point type: " + pc_type);
     }
