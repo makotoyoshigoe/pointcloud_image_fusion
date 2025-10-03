@@ -24,7 +24,7 @@ template<typename T_p>
 class FusionNode : public rclcpp::Node {
 public:
     FusionNode(void);
-    ~FusionNode(void);
+    ~FusionNode();
     void init_pubsub(void);
 	void init_param(void);
     void init_vg_filter(void);
@@ -56,8 +56,6 @@ private:
     std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
-    // std::unique_ptr<Camera> camera_;
-    // std::unique_ptr<Lidar<T_p>> lidar_;
     std::unique_ptr<Coloring> coloring_;
     bool init_tf_;
 	bool rm_outrange_, rm_outlier_;
