@@ -1,4 +1,4 @@
-name: build test 2
+name: build test jazzy
 
 on:
   push:
