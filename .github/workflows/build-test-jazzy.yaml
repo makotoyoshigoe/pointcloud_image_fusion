@@ -26,6 +26,7 @@ jobs:
           git clone https://github.com/makotoyoshigoe/pointcloud_image_fusion.git
       - name: Clone requirements packages
         run: |
+          echo $ROS_DISTRO
           cd ~/ && bash ros2_ws/src/pointcloud_image_fusion/test/setup.bash
       - name: Build this package
         run: |
