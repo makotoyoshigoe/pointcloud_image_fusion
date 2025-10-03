@@ -1,0 +1,37 @@
+name: build test 2
+
+on:
+  push:
+    paths-ignore:
+      - LICENSE
+      - README.md
+      - launch/
+      - rviz/
+      - .gitignore
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: osrf/ros:humble-desktop
+    strategy:
+      matrix:
+        rosdistro:
+          - humble
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Clone this repository
+        run: |
+          mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
+          git clone https://github.com/makotoyoshigoe/pointcloud_image_fusion.git
+      - name: Clone requirements packages
+        run: |
+          cd ~/ && bash ros2_ws/src/pointcloud_image_fusion/test/setup.bash
+      - name: Build this package
+        run: |
+          source /opt/ros/humble/setup.bash
+          cd ~/ros2_ws/
+          rosdep update
+          rosdep install -i -y --from-path src
+          colcon build --symlink-install
+        shell: bash
